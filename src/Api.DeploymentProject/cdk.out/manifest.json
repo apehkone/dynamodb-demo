@@ -1,0 +1,122 @@
+{
+  "version": "21.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "StarbucksLocationDemo.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "StarbucksLocationDemo.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "StarbucksLocationDemo": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://602587151111/eu-west-1",
+      "properties": {
+        "templateFile": "StarbucksLocationDemo.template.json",
+        "tags": {
+          "aws-dotnet-deploy": "302962d8-1b90-4493-ae4e-acd388a58c8b"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::602587151111:role/cdk-hnb659fds-deploy-role-602587151111-eu-west-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::602587151111:role/cdk-hnb659fds-cfn-exec-role-602587151111-eu-west-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-602587151111-eu-west-1/1124d49da791e4ba32acb2c4b9d09b23dbeff857a13bb39f3363985ee9c1b397.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "StarbucksLocationDemo.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::602587151111:role/cdk-hnb659fds-lookup-role-602587151111-eu-west-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "StarbucksLocationDemo.assets"
+      ],
+      "metadata": {
+        "/StarbucksLocationDemo": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "aws-dotnet-deploy",
+                "Value": "302962d8-1b90-4493-ae4e-acd388a58c8b"
+              }
+            ]
+          }
+        ],
+        "/StarbucksLocationDemo/Recipe/ServiceAccessRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecipeServiceAccessRole3815C527"
+          }
+        ],
+        "/StarbucksLocationDemo/Recipe/TaskRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecipeTaskRoleA3C555E6"
+          }
+        ],
+        "/StarbucksLocationDemo/Recipe/TaskRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecipeTaskRoleDefaultPolicy1B272D1E"
+          }
+        ],
+        "/StarbucksLocationDemo/Recipe/AppRunnerService": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecipeAppRunnerServiceDA9A12DF"
+          }
+        ],
+        "/StarbucksLocationDemo/Recipe/EndpointURL": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecipeEndpointURL20D2E3A7"
+          }
+        ],
+        "/StarbucksLocationDemo/StarbucksLocations": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "StarbucksLocations654E87F4"
+            }
+          }
+        ],
+        "/StarbucksLocationDemo/StarbucksLocations/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "StarbucksLocations654E87F4"
+          }
+        ],
+        "/StarbucksLocationDemo/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/StarbucksLocationDemo/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/StarbucksLocationDemo/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "StarbucksLocationDemo"
+    }
+  }
+}

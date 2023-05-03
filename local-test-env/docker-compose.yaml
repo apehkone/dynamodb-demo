@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    environment: 
+      - AWS_DEFAULT_REGION=eu-west-1
+      - EDGE_PORT=4566
+      - SERVICES=sqs
+      - HOSTNAME=localstack
+    ports: 
+      - "53:53"
+      - "53:53/udp"
+      - "443:443"
+      - "4566:4566"
+      - "4571:4571"
+    volumes: 
+      - "/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks: 
+     - backend
+  
+  localstack-init: 
+    image: amazon/aws-cli
+    environment:
+      AWS_REGION_NAME: eu-west-1
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    entrypoint: >
+      sh -c "
+      sleep 15; 
+      aws dynamodb --endpoint-url=http://localstack:4566 create-table --table-name StarbucksLocations --attribute-definitions AttributeName=Country,AttributeType=S AttributeName=StateCityPostcode,AttributeType=S AttributeName=StoreNumber,AttributeType=S --key-schema AttributeName=StoreNumber,KeyType=HASH --provisioned-throughput ReadCapacityUnits=10,WriteCapacityUnits=5 --global-secondary-indexes '[{ \"IndexName\": \"StoreLocationIndex\", \"KeySchema\": [{\"AttributeName\":\"Country\", \"KeyType\":\"HASH\"},{\"AttributeName\":\"StateCityPostcode\", \"KeyType\":\"RANGE\"} ],\"Projection\":{\"ProjectionType\":\"ALL\"},\"ProvisionedThroughput\": {\"ReadCapacityUnits\": 10,\"WriteCapacityUnits\": 5}}]' --region eu-west-1;
+      "
+    networks: 
+     - backend
+    depends_on:
+     - localstack
+
+networks: 
+  backend: 
+    driver: bridge

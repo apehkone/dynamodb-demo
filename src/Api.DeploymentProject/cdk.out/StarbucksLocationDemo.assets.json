@@ -1,0 +1,20 @@
+{
+  "version": "21.0.0",
+  "files": {
+    "1124d49da791e4ba32acb2c4b9d09b23dbeff857a13bb39f3363985ee9c1b397": {
+      "source": {
+        "path": "StarbucksLocationDemo.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "602587151111-eu-west-1": {
+          "bucketName": "cdk-hnb659fds-assets-602587151111-eu-west-1",
+          "objectKey": "1124d49da791e4ba32acb2c4b9d09b23dbeff857a13bb39f3363985ee9c1b397.json",
+          "region": "eu-west-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::602587151111:role/cdk-hnb659fds-file-publishing-role-602587151111-eu-west-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

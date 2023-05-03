@@ -1,0 +1,266 @@
+{
+ "Description": "AWSDotnetDeployCDKStack",
+ "Metadata": {
+  "aws-dotnet-deploy-settings": "{\"ApplicationIAMRole\":{\"CreateNew\":true,\"RoleArn\":null},\"VPCConnector\":{\"UseVPCConnector\":false,\"CreateNew\":false,\"VpcConnectorId\":null,\"CreateNewVpc\":false,\"VpcId\":null,\"Subnets\":[],\"SecurityGroups\":[]},\"ServiceAccessIAMRole\":{\"CreateNew\":true,\"RoleArn\":null},\"ServiceName\":\"StarbucksLocationDemo-service\",\"Port\":80,\"StartCommand\":\"\",\"EncryptionKmsKey\":\"\",\"HealthCheckHealthyThreshold\":3,\"HealthCheckInterval\":5,\"HealthCheckPath\":\"\",\"HealthCheckProtocol\":\"TCP\",\"HealthCheckTimeout\":2,\"HealthCheckUnhealthyThreshold\":3,\"Cpu\":\"1024\",\"Memory\":\"2048\",\"AppRunnerEnvironmentVariables\":{}}",
+  "aws-dotnet-deploy-recipe-id": "302962d8-1b90-4493-ae4e-acd388a58c8b",
+  "aws-dotnet-deploy-recipe-version": "1.0.2",
+  "aws-dotnet-deploy-deployment-bundle-settings": "{\"DockerBuildArgs\":\"\",\"DockerfilePath\":\"Dockerfile\",\"DockerExecutionDirectory\":\"../..\",\"ECRRepositoryName\":\"starbuckslocationdemo\"}"
+ },
+ "Resources": {
+  "RecipeServiceAccessRole3815C527": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "build.apprunner.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "StarbucksLocationDemo/Recipe/ServiceAccessRole/Resource"
+   }
+  },
+  "RecipeTaskRoleA3C555E6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "tasks.apprunner.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "StarbucksLocationDemo/Recipe/TaskRole/Resource"
+   }
+  },
+  "RecipeTaskRoleDefaultPolicy1B272D1E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:*",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "StarbucksLocations654E87F4",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "StarbucksLocations654E87F4",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "RecipeTaskRoleDefaultPolicy1B272D1E",
+    "Roles": [
+     {
+      "Ref": "RecipeTaskRoleA3C555E6"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "StarbucksLocationDemo/Recipe/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "RecipeAppRunnerServiceDA9A12DF": {
+   "Type": "AWS::AppRunner::Service",
+   "Properties": {
+    "SourceConfiguration": {
+     "AuthenticationConfiguration": {
+      "AccessRoleArn": {
+       "Fn::GetAtt": [
+        "RecipeServiceAccessRole3815C527",
+        "Arn"
+       ]
+      }
+     },
+     "ImageRepository": {
+      "ImageConfiguration": {
+       "Port": "80",
+       "RuntimeEnvironmentVariables": []
+      },
+      "ImageIdentifier": {
+       "Fn::Join": [
+        "",
+        [
+         "602587151111.dkr.ecr.eu-west-1.",
+         {
+          "Ref": "AWS::URLSuffix"
+         },
+         "/starbuckslocationdemo:638187020323028540"
+        ]
+       ]
+      },
+      "ImageRepositoryType": "ECR"
+     }
+    },
+    "HealthCheckConfiguration": {
+     "HealthyThreshold": 3,
+     "Interval": 5,
+     "Protocol": "TCP",
+     "Timeout": 2,
+     "UnhealthyThreshold": 3
+    },
+    "InstanceConfiguration": {
+     "Cpu": "1024",
+     "InstanceRoleArn": {
+      "Fn::GetAtt": [
+       "RecipeTaskRoleA3C555E6",
+       "Arn"
+      ]
+     },
+     "Memory": "2048"
+    },
+    "ServiceName": "StarbucksLocationDemo-service"
+   },
+   "Metadata": {
+    "aws:cdk:path": "StarbucksLocationDemo/Recipe/AppRunnerService"
+   }
+  },
+  "StarbucksLocations654E87F4": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "KeySchema": [
+     {
+      "AttributeName": "StoreNumber",
+      "KeyType": "HASH"
+     }
+    ],
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "StoreNumber",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "Country",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "StateCityPostcode",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "StoreLocationIndex",
+      "KeySchema": [
+       {
+        "AttributeName": "Country",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "StateCityPostcode",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "TableName": "StarbucksLocations"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "StarbucksLocationDemo/StarbucksLocations/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/y2PQQ+CMAyFfwv3UUCNNw+KXtWA8WrGqEkV1mUbGEL4707w9F5fm355K9isIYvkx8WqfscNVTCWXqq3CNFjJNnCWHCDIn/qWa/ckBp+4+ImgcpCgYYdebbDQToU0hjbaY0Wwl2JtieFoh60bLkOgJuslo+zmSZRoOPOqjm7dN50fub900kc2Z/RJ1tIIU3gfLrlbHFvTHxH64j1rg8lkuy3hjR6OaI48D21CMWiX+1oZ8zoAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "StarbucksLocationDemo/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "RecipeEndpointURL20D2E3A7": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "RecipeAppRunnerServiceDA9A12DF",
+        "ServiceUrl"
+       ]
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

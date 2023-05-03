@@ -1,0 +1,347 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.0"
+        }
+      },
+      "StarbucksLocationDemo": {
+        "id": "StarbucksLocationDemo",
+        "path": "StarbucksLocationDemo",
+        "children": {
+          "Recipe": {
+            "id": "Recipe",
+            "path": "StarbucksLocationDemo/Recipe",
+            "children": {
+              "ServiceAccessRole": {
+                "id": "ServiceAccessRole",
+                "path": "StarbucksLocationDemo/Recipe/ServiceAccessRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "StarbucksLocationDemo/Recipe/ServiceAccessRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "build.apprunner.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.43.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.43.1"
+                }
+              },
+              "ServiceAccessRoleManagedPolicy": {
+                "id": "ServiceAccessRoleManagedPolicy",
+                "path": "StarbucksLocationDemo/Recipe/ServiceAccessRoleManagedPolicy",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.43.1"
+                }
+              },
+              "TaskRole": {
+                "id": "TaskRole",
+                "path": "StarbucksLocationDemo/Recipe/TaskRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "StarbucksLocationDemo/Recipe/TaskRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "tasks.apprunner.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.43.1"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "StarbucksLocationDemo/Recipe/TaskRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "StarbucksLocationDemo/Recipe/TaskRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "dynamodb:*",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "StarbucksLocations654E87F4",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "StarbucksLocations654E87F4",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/index/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "RecipeTaskRoleDefaultPolicy1B272D1E",
+                            "roles": [
+                              {
+                                "Ref": "RecipeTaskRoleA3C555E6"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.43.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.43.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.43.1"
+                }
+              },
+              "ECRRepository": {
+                "id": "ECRRepository",
+                "path": "StarbucksLocationDemo/Recipe/ECRRepository",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ecr.RepositoryBase",
+                  "version": "2.43.1"
+                }
+              },
+              "AppRunnerService": {
+                "id": "AppRunnerService",
+                "path": "StarbucksLocationDemo/Recipe/AppRunnerService",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::AppRunner::Service",
+                  "aws:cdk:cloudformation:props": {
+                    "sourceConfiguration": {
+                      "authenticationConfiguration": {
+                        "accessRoleArn": {
+                          "Fn::GetAtt": [
+                            "RecipeServiceAccessRole3815C527",
+                            "Arn"
+                          ]
+                        }
+                      },
+                      "imageRepository": {
+                        "imageIdentifier": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "602587151111.dkr.ecr.eu-west-1.",
+                              {
+                                "Ref": "AWS::URLSuffix"
+                              },
+                              "/starbuckslocationdemo:638187020323028540"
+                            ]
+                          ]
+                        },
+                        "imageRepositoryType": "ECR",
+                        "imageConfiguration": {
+                          "port": "80",
+                          "runtimeEnvironmentVariables": []
+                        }
+                      }
+                    },
+                    "healthCheckConfiguration": {
+                      "healthyThreshold": 3,
+                      "interval": 5,
+                      "protocol": "TCP",
+                      "timeout": 2,
+                      "unhealthyThreshold": 3
+                    },
+                    "instanceConfiguration": {
+                      "cpu": "1024",
+                      "instanceRoleArn": {
+                        "Fn::GetAtt": [
+                          "RecipeTaskRoleA3C555E6",
+                          "Arn"
+                        ]
+                      },
+                      "memory": "2048"
+                    },
+                    "serviceName": "StarbucksLocationDemo-service"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apprunner.CfnService",
+                  "version": "2.43.1"
+                }
+              },
+              "EndpointURL": {
+                "id": "EndpointURL",
+                "path": "StarbucksLocationDemo/Recipe/EndpointURL",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.43.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.0"
+            }
+          },
+          "StarbucksLocations": {
+            "id": "StarbucksLocations",
+            "path": "StarbucksLocationDemo/StarbucksLocations",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "StarbucksLocationDemo/StarbucksLocations/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "keySchema": [
+                      {
+                        "attributeName": "StoreNumber",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "StoreNumber",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "Country",
+                        "attributeType": "S"
+                      },
+                      {
+                        "attributeName": "StateCityPostcode",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "globalSecondaryIndexes": [
+                      {
+                        "indexName": "StoreLocationIndex",
+                        "keySchema": [
+                          {
+                            "attributeName": "Country",
+                            "keyType": "HASH"
+                          },
+                          {
+                            "attributeName": "StateCityPostcode",
+                            "keyType": "RANGE"
+                          }
+                        ],
+                        "projection": {
+                          "projectionType": "ALL"
+                        }
+                      }
+                    ],
+                    "tableName": "StarbucksLocations"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.43.1"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "StarbucksLocationDemo/StarbucksLocations/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.43.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.43.1"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "StarbucksLocationDemo/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "StarbucksLocationDemo/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.43.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.43.1"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.43.1"
+    }
+  }
+}
