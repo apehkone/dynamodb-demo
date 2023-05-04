@@ -44,11 +44,11 @@ public class LocationsRepository : ILocationsRepository
             criteria.Append($"{query.state}#");
         }
 
-        if (!string.IsNullOrEmpty(query.city) && !string.IsNullOrEmpty(query.city)) {
+        if (!string.IsNullOrEmpty(query.city) && !string.IsNullOrEmpty(query.state)) {
             criteria.Append($"{query.city}#");
         }
 
-        if (!string.IsNullOrEmpty(query.city) && !string.IsNullOrEmpty(query.city) && !string.IsNullOrEmpty(query.postcode)) {
+        if (!string.IsNullOrEmpty(query.city) && !string.IsNullOrEmpty(query.state) && !string.IsNullOrEmpty(query.postcode)) {
             criteria.Append($"{query.postcode}");
         }
 
